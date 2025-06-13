@@ -224,6 +224,7 @@ struct EventListView: View {
                                     start: events[index].startDate, end: events[index].endDate)
                                 {
                                     Text("All-day")
+                                    Text(" ")
                                 } else {
                                     Text("\(events[index].startDate, style: .time)")
                                     Text("\(events[index].endDate, style: .time)")
