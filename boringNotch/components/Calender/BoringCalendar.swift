@@ -275,7 +275,7 @@ struct EventListView: View {
             .scrollTargetBehavior(.viewAligned)
             .onAppear {
                 let index = events.firstIndex(where: { !isAllDayEvent(start: $0.startDate, end: $0.endDate) && !isEventEnded($0.endDate) }) ?? 0
-                reader.scrollTo(index)
+                reader.scrollTo(index, anchor: .top)
             }
         }
     }
