@@ -10,10 +10,15 @@
 import Foundation
 import EventKit
 
+protocol CalendarSettingsProviding {
+    func getCalendarSelected(_ calendar: CalendarModel) -> Bool
+    func setCalendarSelected(_ calendar: CalendarModel, isSelected: Bool) async
+}
+
 protocol CalendarServiceProviding {
     func requestAccess() async -> Bool
     func calendars() async -> [CalendarModel]
-    func events(from start: Date, to end: Date, calendars: [String]) async -> [EventModel]
+    func events(from start: Date, to end: Date, calendars: CalendarSettingsProviding) async -> [EventModel]
 }
 
 class CalendarService: CalendarServiceProviding {
@@ -65,9 +70,9 @@ class CalendarService: CalendarServiceProviding {
         return calendars.map { CalendarModel(from: $0) }
     }
     
-    func events(from start: Date, to end: Date, calendars ids: [String]) async -> [EventModel] {
+    func events(from start: Date, to end: Date, calendars settings: CalendarSettingsProviding) async -> [EventModel] {
         let allCalendars = await self.calendars()
-        let filteredCalendars = allCalendars.filter { ids.isEmpty || ids.contains($0.id) }
+        let filteredCalendars = allCalendars.filter { settings.getCalendarSelected($0) }
         let ekCalendars = filteredCalendars.compactMap { calendarModel in
             store.calendars(for: .event).first { $0.calendarIdentifier == calendarModel.id } ??
             store.calendars(for: .reminder).first { $0.calendarIdentifier == calendarModel.id }

@@ -211,6 +211,13 @@ struct EmptyEventsView: View {
     }
 }
 
+extension View {
+    func Debug(_ vars: Any...) -> some View {
+        for v in vars { print(v) }
+        return EmptyView()
+    }
+}
+
 struct EventListView: View {
     @Environment(\.openURL) private var openURL
     let events: [EventModel]
@@ -233,7 +240,6 @@ struct EventListView: View {
                             .multilineTextAlignment(.trailing)
                             .padding(.bottom, 8)
                             .font(.caption2)
-                            .id(index)
                         }
                     }
 
@@ -264,7 +270,8 @@ struct EventListView: View {
                                         .foregroundStyle(.white)
                                 }
                                 .buttonStyle(.plain)
-
+                                .id(events[index].id)
+                                
                                 Spacer(minLength: 0)
                             }
                             .opacity((events[index].eventStatus == .ended) ? 0.6 : 1)
@@ -275,8 +282,11 @@ struct EventListView: View {
             .scrollIndicators(.never)
             .scrollTargetBehavior(.viewAligned)
             .onAppear {
-                let index = events.firstIndex(where: { !$0.isAllDay && $0.eventStatus != .ended }) ?? 0
-                reader.scrollTo(index, anchor: .top)
+                let event = events.first(where: { !$0.isAllDay && $0.eventStatus != .ended })
+                if (event != nil) {
+                    print("Scroll to \(event!.id)")
+                    reader.scrollTo(event!.id, anchor: .top)
+                }
             }
         }
     }
