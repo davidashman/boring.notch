@@ -10,11 +10,6 @@
 import Foundation
 import EventKit
 
-protocol CalendarSettingsProviding {
-    func getCalendarSelected(_ calendar: CalendarModel) -> Bool
-    func setCalendarSelected(_ calendar: CalendarModel, isSelected: Bool) async
-}
-
 protocol CalendarServiceProviding {
     func requestAccess() async -> Bool
     func calendars() async -> [CalendarModel]
